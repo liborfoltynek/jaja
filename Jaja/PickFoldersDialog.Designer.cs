@@ -29,9 +29,9 @@
         private void InitializeComponent()
         {
             this.panel1 = new System.Windows.Forms.Panel();
-            this.btOK = new System.Windows.Forms.Button();
-            this.btCancel = new System.Windows.Forms.Button();
             this.button1 = new System.Windows.Forms.Button();
+            this.btCancel = new System.Windows.Forms.Button();
+            this.btOK = new System.Windows.Forms.Button();
             this.chlFolders = new System.Windows.Forms.ListView();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
@@ -47,6 +47,27 @@
             this.panel1.Size = new System.Drawing.Size(466, 38);
             this.panel1.TabIndex = 1;
             // 
+            // button1
+            // 
+            this.button1.Location = new System.Drawing.Point(12, 6);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(75, 23);
+            this.button1.TabIndex = 1;
+            this.button1.Text = "Vše";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
+            // 
+            // btCancel
+            // 
+            this.btCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+            this.btCancel.Location = new System.Drawing.Point(298, 6);
+            this.btCancel.Name = "btCancel";
+            this.btCancel.Size = new System.Drawing.Size(75, 23);
+            this.btCancel.TabIndex = 2;
+            this.btCancel.Text = "Zrušit";
+            this.btCancel.UseVisualStyleBackColor = true;
+            this.btCancel.Click += new System.EventHandler(this.btCancel_Click);
+            // 
             // btOK
             // 
             this.btOK.Location = new System.Drawing.Point(379, 6);
@@ -56,27 +77,6 @@
             this.btOK.Text = "OK";
             this.btOK.UseVisualStyleBackColor = true;
             this.btOK.Click += new System.EventHandler(this.btOK_Click);
-            // 
-            // btCancel
-            // 
-            this.btCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.btCancel.Location = new System.Drawing.Point(298, 6);
-            this.btCancel.Name = "btCancel";
-            this.btCancel.Size = new System.Drawing.Size(75, 23);
-            this.btCancel.TabIndex = 1;
-            this.btCancel.Text = "Zrušit";
-            this.btCancel.UseVisualStyleBackColor = true;
-            this.btCancel.Click += new System.EventHandler(this.btCancel_Click);
-            // 
-            // button1
-            // 
-            this.button1.Location = new System.Drawing.Point(12, 6);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(75, 23);
-            this.button1.TabIndex = 2;
-            this.button1.Text = "Vše";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
             // chlFolders
             // 
@@ -99,6 +99,7 @@
             this.Controls.Add(this.chlFolders);
             this.Controls.Add(this.panel1);
             this.Name = "PickFoldersDialog";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "PickFoldersDialog";
             this.Activated += new System.EventHandler(this.PickFoldersDialog_Activated);
             this.Load += new System.EventHandler(this.PickFoldersDialog_Load);

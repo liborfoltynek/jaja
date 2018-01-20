@@ -19,6 +19,8 @@ namespace Jaja
             get { return selectedFolders.ToList(); }
         }
 
+        public List<MAPIFolderInfo> AllMAPIFolders { get; set; }
+
         public PickFoldersDialog()
         {
             InitializeComponent();
@@ -26,7 +28,7 @@ namespace Jaja
 
         private void PickFoldersDialog_Load(object sender, EventArgs e)
         {
-            
+            Log.Write("PickFoldersDialog load");
         }
 
         private void btOK_Click(object sender, EventArgs e)
@@ -34,7 +36,13 @@ namespace Jaja
             DialogResult = DialogResult.OK;
             foreach (ListViewItem item in chlFolders.CheckedItems)
             {
-                selectedFolders.Add((MAPIFolderInfo)item.Tag);
+                MAPIFolderInfo mapi = item.Tag as MAPIFolderInfo;
+                if (mapi == null)
+                {
+                    Log.Write($"Cannot convert folder to mapi: {item.Tag}");
+                }
+                Log.Write($"Adding MAPI to selected folders: {mapi.ToString()}");
+                selectedFolders.Add(mapi);
             }
             Close();
         }
@@ -42,11 +50,13 @@ namespace Jaja
         private void btCancel_Click(object sender, EventArgs e)
         {
             DialogResult = DialogResult.Cancel;
+            Log.Write($"PickFolderDialog cancelled.");
             Close();
         }
 
-        private  void button1_Click(object sender, EventArgs e)
+        private void button1_Click(object sender, EventArgs e)
         {
+            Log.Write("Selecting all folders.");
             foreach (ListViewItem li in chlFolders.Items)
             {
                 li.Checked = true;
@@ -55,31 +65,56 @@ namespace Jaja
 
         private void loadCallendars()
         {
+            Log.Write("Loading callendars...");
             chlFolders.Items.Clear();
 
             Microsoft.Office.Interop.Outlook.Application app = new Microsoft.Office.Interop.Outlook.Application();
             Microsoft.Office.Interop.Outlook.NameSpace session = app.Session;
-            chlFolders.SuspendLayout();
+            chlFolders.BeginUpdate();
+
             foreach (MAPIFolder ff in session.Folders)
             {
+                Log.Write($"Folder in session: {ff}");
                 foreach (MAPIFolder folder in ff.Folders)
                 {
+                    Log.Write($"Folder {folder.FullFolderPath}");
                     if (folder.DefaultMessageClass == "IPM.Appointment")
                     {
+                        Log.Write($"Folder {folder.FullFolderPath} is IPM.Appointment");
+                        Log.Write($"Creating FolderInfo");
                         MAPIFolderInfo folderInfo = new MAPIFolderInfo(folder);
                         ListViewItem li = new ListViewItem(folderInfo.ToString());
+                        Log.Write($"Created ListViewItem: {folderInfo}");
                         li.Tag = folderInfo;
+                        bool check = AllMAPIFolders.Any(f => f.ToString() == folderInfo.ToString());
+                        Log.Write($"ListView checked status will be: {check}");
+                        li.Checked = check;
                         chlFolders.Items.Add(li);
+                    }
+                    else
+                    {
+                        Log.Write($"Folder {folder.FullFolderPath} is NOT IPM.Appointment");
                     }
                 }
             }
-            chlFolders.ResumeLayout();
+            chlFolders.EndUpdate();
             chlFolders.Refresh();
         }
 
+        bool calLoaded = false;
         private void PickFoldersDialog_Activated(object sender, EventArgs e)
         {
-            loadCallendars();
+            if (!calLoaded)
+            {
+                Log.Write("Loading callendars first time...");
+                loadCallendars();
+                calLoaded = true;
+            }
+            else
+            {
+                Log.Write("Callendars already loaded.");
+            }
         }
     }
 }
+
