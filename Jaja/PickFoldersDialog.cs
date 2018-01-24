@@ -65,7 +65,7 @@ namespace Jaja
 
         private void loadCallendars()
         {
-            Log.Write("Loading callendars...");
+            Log.Write("\r\nLoading callendars...");
             chlFolders.Items.Clear();
 
             Microsoft.Office.Interop.Outlook.Application app = new Microsoft.Office.Interop.Outlook.Application();
@@ -80,7 +80,7 @@ namespace Jaja
                     Log.Write($"Folder {folder.FullFolderPath}");
                     if (folder.DefaultMessageClass == "IPM.Appointment")
                     {
-                        Log.Write($"Folder {folder.FullFolderPath} is IPM.Appointment");
+                       // Log.Write($"Folder {folder.FullFolderPath} is IPM.Appointment");
                         Log.Write($"Creating FolderInfo");
                         MAPIFolderInfo folderInfo = new MAPIFolderInfo(folder);
                         ListViewItem li = new ListViewItem(folderInfo.ToString());
@@ -91,10 +91,10 @@ namespace Jaja
                         li.Checked = check;
                         chlFolders.Items.Add(li);
                     }
-                    else
-                    {
-                        Log.Write($"Folder {folder.FullFolderPath} is NOT IPM.Appointment");
-                    }
+                    //else
+                    //{
+                    //    Log.Write($"Folder {folder.FullFolderPath} is NOT IPM.Appointment");
+                    //}
                 }
             }
             chlFolders.EndUpdate();

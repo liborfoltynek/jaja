@@ -108,7 +108,7 @@ namespace Jaja
 
         private void ShowData()
         {
-            Log.Write($"ShowData: ");
+            Log.Write($"ShowData START: ");
             try
             {
                 this.Cursor = Cursors.WaitCursor;
@@ -123,6 +123,8 @@ namespace Jaja
                 foreach (var project in projects)
                 {
                     Log.Write($"ShowData: processing project {project.Key}");
+                    SetStatus($"Projekt: {project.Key}", -1);
+
                     ProjectInfo projectInfo = new ProjectInfo(project.Key);
 
                     TimeSpan allTimes = new TimeSpan(0);
@@ -140,7 +142,7 @@ namespace Jaja
                     allTimes += duration;
 
                     TimeSpan tsTotal = new TimeSpan(0);
-                    foreach (AppointmentInfo ai in project.OrderBy(d => d.Appointment.Start))
+                    foreach (AppointmentInfo ai in project.OrderBy(d => d.Appointment.Start).ToList())
                     {
                         Log.Write($"ShowData: processing appointment {ai.Subject}");
                         // ai.ProjectInfo = projectInfo;
@@ -167,6 +169,7 @@ namespace Jaja
             }
             finally
             {
+                SetStatus("End update", -1);
                 lvAppointments.EndUpdate();
                 AllItemsReady = true;
                 this.Cursor = Cursors.Default;
@@ -194,7 +197,19 @@ namespace Jaja
 
                         items.IncludeRecurrences = true;
 
+                        DateTime start = monthCalendar1.SelectionStart;
+                        DateTime end = monthCalendar2.SelectionStart.AddDays(1);
+
+                        string filter1 = "[Start] >= '" +
+        start.ToString("g")
+        + "' AND [End] <= '" +
+        end.ToString("g") + "'";
+
                         Log.Write($"LoadAllData: Total {items.Count} items");
+                        items = items.Restrict(filter1);
+                        Log.Write($"LoadAllData: Filtered items {items.Count} items");
+
+
 
                         int n = 0;
                         int lastProgress = 0;
@@ -322,7 +337,7 @@ namespace Jaja
                 TimeSpan totalTime = TimeSpan.FromSeconds(0);
                 Log.Write($"Export Projects HTML, total time is now {totalTime}");
                 foreach (var project in projects)
-                {                    
+                {
                     projekt = project.Key;
                     projectWrite = true;
                     Log.Write($"Export Projects HTML, project {projekt}, total time is now {totalTime}");
@@ -403,7 +418,7 @@ namespace Jaja
                     {
                         AppointmentInfo pi = li.Tag as AppointmentInfo;
                         TimeSpan duration = pi.Appointment.End - pi.Appointment.Start;
-                        w.WriteLine(string.Format("<tr><td><i>{0}</i></td><td><i>{1}</i></td><td><i>{2}</i></td><td><i>{3}</i></td></tr>", pi.Subject, duration.TotalHours.ToString(), pi.Appointment.Start.ToShortDateString(), pi.FolderInfo.ToString()));                        
+                        w.WriteLine(string.Format("<tr><td><i>{0}</i></td><td><i>{1}</i></td><td><i>{2}</i></td><td><i>{3}</i></td></tr>", pi.Subject, duration.TotalHours.ToString(), pi.Appointment.Start.ToShortDateString(), pi.FolderInfo.ToString()));
                         ts += duration;
                         Log.Write($"Export Items HTML, duration of {pi.Appointment.Subject} is {duration}, total is {ts}");
                     }
